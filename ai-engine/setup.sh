@@ -33,6 +33,14 @@ else
   echo "    Ollama al geïnstalleerd: $(ollama --version)"
 fi
 
+# Ollama threadconfiguratie: gebruik alle logische CPUs (standaard gebruikt
+# llama.cpp enkel fysieke cores, wat op HyperV VMs ~50% benutting geeft)
+mkdir -p /etc/systemd/system/ollama.service.d
+cp "$SCRIPT_DIR/ollama/override.conf" /etc/systemd/system/ollama.service.d/override.conf
+systemctl daemon-reload
+systemctl restart ollama
+echo "    Ollama geconfigureerd: OLLAMA_HOST=0.0.0.0, OLLAMA_NUM_THREAD=20"
+
 # ── LiteLLM ─────────────────────────────────────────────────────────────────
 echo ""
 echo "==> LiteLLM Docker container configureren..."
