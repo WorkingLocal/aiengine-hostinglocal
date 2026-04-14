@@ -1,0 +1,38 @@
+model_list:
+  - model_name: qwen2.5-72b
+    litellm_params:
+      model: ollama/qwen2.5:72b
+      api_base: http://host.docker.internal:11434
+
+  - model_name: qwen2.5-32b
+    litellm_params:
+      model: ollama/qwen2.5:32b
+      api_base: http://host.docker.internal:11434
+
+  - model_name: qwen2.5-7b
+    litellm_params:
+      model: ollama/qwen2.5:7b
+      api_base: http://host.docker.internal:11434
+
+  - model_name: llama3.3-70b
+    litellm_params:
+      model: ollama/llama3.3:70b
+      api_base: http://host.docker.internal:11434
+
+  - model_name: qwen2-vl-7b
+    litellm_params:
+      model: ollama/qwen2-vl:7b
+      api_base: http://host.docker.internal:11434
+
+  # Alias: standaard → qwen2.5-72b (gebruikt door Blog Convertor als fallback)
+  - model_name: standaard
+    litellm_params:
+      model: ollama/qwen2.5:72b
+      api_base: http://host.docker.internal:11434
+
+general_settings:
+  master_key: HostingLocal2024
+
+litellm_settings:
+  request_timeout: 10800   # 3 uur per request (nodig voor grote modellen)
+  drop_params: true

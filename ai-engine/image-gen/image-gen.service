@@ -1,0 +1,19 @@
+[Unit]
+Description=AI Engine Image Generation Service — poort 11436
+After=network.target
+
+[Service]
+Type=simple
+User=ailocal
+WorkingDirectory=/home/ailocal/image-gen
+ExecStart=/home/ailocal/image-gen/venv/bin/python3 /home/ailocal/image-gen/server.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ai-image-gen
+# Het laden van SDXL kan enkele minuten duren bij de eerste aanvraag
+TimeoutStartSec=600
+
+[Install]
+WantedBy=multi-user.target

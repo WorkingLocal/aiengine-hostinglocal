@@ -1,0 +1,17 @@
+[Unit]
+Description=AI Engine Stats Service — poort 11435
+After=network.target ollama.service
+
+[Service]
+Type=simple
+User=ailocal
+WorkingDirectory=/home/ailocal
+ExecStart=/usr/bin/python3 /home/ailocal/stats-server.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ai-stats
+
+[Install]
+WantedBy=multi-user.target
