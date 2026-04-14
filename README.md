@@ -1,22 +1,14 @@
-# Blog Convertor — AI Engine (hostinglocal)
+# AI Engine — hostinglocal
 
-AI Engine setup voor de Blog Convertor: automatische conversie van Engelstalige blogartikelen naar Nederlands met LLM, inclusief AI-gegenereerde afbeeldingen.
+Centrale AI Engine voor Working Local toepassingen: LLM-inferentie, beeldgeneratie en gerelateerde AI-services.
 
-De AI Engine draait als Ubuntu 24.04 VM op een Windows Server 2025 host (Hyper-V) en is bereikbaar via Tailscale op `100.80.180.55`.
+Draait als Ubuntu 24.04 VM op een Windows Server 2025 host (Hyper-V), bereikbaar via Tailscale op `100.80.180.55`.
 
-## Architectuur
+## Huidige toepassingen
 
-```
-Blog Convertor UI (VPS poort 3456)
-    └─► n8n webhook (VPS)
-            ├─► LiteLLM :4000 ──► Ollama :11434  (tekst herschrijven)
-            ├─► Ollama :11434  (qwen2-vl:7b — afbeelding beschrijven)
-            ├─► Image Gen :11436  (SDXL of Replicate API)
-            └─► Stats :11435  (RAM/CPU visualisatie in UI)
-
-Alle AI services draaien op AI Engine VM
-Tailscale IP: 100.80.180.55
-```
+| Toepassing | Services gebruikt |
+|---|---|
+| Blog Convertor | LiteLLM (tekstconversie), Stats Service (UI monitoring), Image Gen (afbeeldingen), Ollama Vision |
 
 ## Hardware
 
@@ -37,13 +29,13 @@ Tailscale IP: 100.80.180.55
 |---|---|---|---|
 | Ollama | 11434 | systemd | LLM inference engine |
 | LiteLLM | 4000 | Docker container | OpenAI-compatibele proxy naar Ollama |
-| Stats Service | 11435 | systemd (`ai-stats`) | RAM/CPU monitoring voor Blog Convertor UI |
+| Stats Service | 11435 | systemd (`ai-stats`) | RAM/CPU/model monitoring |
 | Image Gen Service | 11436 | systemd (`ai-image-gen`) | Afbeeldingen genereren (SDXL of Replicate) |
 
 ## Repository structuur
 
 ```
-blogconvertor-hostinglocal/
+aiengine-hostinglocal/
 └── ai-engine/
     ├── setup.sh                # Volledig installatiescript
     ├── stats-server.py         # Stats Service (poort 11435)
@@ -130,6 +122,6 @@ docker restart litellm
 
 | Repo | Inhoud |
 |---|---|
-| [n8n-workinglocal](https://github.com/WorkingLocal/n8n-workinglocal) | n8n workflow voor Blog Convertor |
+| [n8n-workinglocal](https://github.com/WorkingLocal/n8n-workinglocal) | n8n workflows (incl. Blog Convertor) |
 | [vps-workinglocal](https://github.com/WorkingLocal/vps-workinglocal) | Blog Convertor UI (Node.js, VPS poort 3456) |
 | [onpremise-workinglocal](https://github.com/WorkingLocal/onpremise-workinglocal) | On-premise Working Local server |
