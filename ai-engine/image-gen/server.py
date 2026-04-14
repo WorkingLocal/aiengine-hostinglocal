@@ -8,6 +8,13 @@ import http.server, json, base64, os, time, tempfile, urllib.request
 
 PORT = 11436
 
+# Lokale modellen: naam → (huggingface_id, pipeline_klasse, standaard_steps)
+LOCAL_MODELS = {
+    'sdxl':       ('stabilityai/stable-diffusion-xl-base-1.0', 'sdxl', 20),
+    'sdxl-turbo': ('stabilityai/sdxl-turbo',                   'sdxl', 4),
+    'sd15':       ('runwayml/stable-diffusion-v1-5',           'sd15', 20),
+}
+
 REPLICATE_MODELS = {
     'sdxl':         'stability-ai/sdxl',
     'flux-schnell': 'black-forest-labs/flux-schnell',
@@ -17,24 +24,38 @@ REPLICATE_MODELS = {
 _pipe = None
 _pipe_model = None
 
-def load_local_pipe(model_id='stabilityai/stable-diffusion-xl-base-1.0'):
+def load_local_pipe(model_key):
     global _pipe, _pipe_model
-    if _pipe is not None and _pipe_model == model_id:
+    if _pipe is not None and _pipe_model == model_key:
         return _pipe
+
+    model_id, pipeline_type, _ = LOCAL_MODELS.get(model_key, LOCAL_MODELS['sdxl'])
     import torch
-    from diffusers import StableDiffusionXLPipeline
+
     print('[image-gen] Laden: ' + model_id, flush=True)
-    _pipe = StableDiffusionXLPipeline.from_pretrained(
-        model_id, torch_dtype=torch.float32, use_safetensors=True
-    )
+    if pipeline_type == 'sd15':
+        from diffusers import StableDiffusionPipeline
+        _pipe = StableDiffusionPipeline.from_pretrained(
+            model_id, torch_dtype=torch.float32
+        )
+    else:
+        from diffusers import StableDiffusionXLPipeline
+        _pipe = StableDiffusionXLPipeline.from_pretrained(
+            model_id, torch_dtype=torch.float32, use_safetensors=True
+        )
     _pipe.set_progress_bar_config(disable=True)
-    _pipe_model = model_id
+    _pipe_model = model_key
     print('[image-gen] Model geladen', flush=True)
     return _pipe
 
-def generate_local(prompt, steps=20, width=1024, height=1024):
-    pipe = load_local_pipe()
-    image = pipe(prompt, num_inference_steps=steps, width=width, height=height).images[0]
+def generate_local(prompt, model='sdxl', steps=None, width=1024, height=1024):
+    _, _, default_steps = LOCAL_MODELS.get(model, LOCAL_MODELS['sdxl'])
+    actual_steps = steps if steps is not None else default_steps
+    # SD 1.5 ondersteunt max 512×512 goed; SDXL 1024×1024
+    if model == 'sd15':
+        width, height = min(width, 512), min(height, 512)
+    pipe = load_local_pipe(model)
+    image = pipe(prompt, num_inference_steps=actual_steps, width=width, height=height).images[0]
     with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
         image.save(f.name)
         path = f.name
@@ -104,14 +125,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
         replicate_key = body.get('replicate_key', '')
         width         = int(body.get('width', 1024))
         height        = int(body.get('height', 1024))
-        steps         = int(body.get('steps', 20))
+        steps         = body.get('steps')
+        steps         = int(steps) if steps is not None else None
         try:
             if backend == 'replicate':
                 if not replicate_key:
                     raise Exception('Replicate API-key ontbreekt')
                 b64 = generate_replicate(prompt, model, replicate_key, width, height)
             else:
-                b64 = generate_local(prompt, steps, width, height)
+                b64 = generate_local(prompt, model, steps, width, height)
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
