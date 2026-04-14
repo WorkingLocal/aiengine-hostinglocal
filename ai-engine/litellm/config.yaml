@@ -19,9 +19,9 @@ model_list:
       model: ollama/llama3.3:70b
       api_base: http://host.docker.internal:11434
 
-  - model_name: qwen2-vl-7b
+  - model_name: qwen2.5vl-7b
     litellm_params:
-      model: ollama/qwen2-vl:7b
+      model: ollama/qwen2.5vl:7b
       api_base: http://host.docker.internal:11434
 
   # Alias: standaard → qwen2.5-72b (gebruikt door Blog Convertor als fallback)
