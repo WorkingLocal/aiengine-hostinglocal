@@ -19,6 +19,7 @@ model_list:
       model: ollama/llama3.3:70b
       api_base: http://host.docker.internal:11434
 
+  # Vision model — niet beschikbaar als tekstmodel in Blog Convertor UI
   - model_name: qwen2.5vl-7b
     litellm_params:
       model: ollama/qwen2.5vl:7b
