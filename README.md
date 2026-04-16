@@ -60,6 +60,22 @@ Het script installeert automatisch:
 - Stats Service (systemd)
 - Image Gen Service (Python venv + systemd)
 
+## Ollama configuratie
+
+De Ollama service wordt geconfigureerd via een systemd override:
+
+```
+/etc/systemd/system/ollama.service.d/override.conf
+```
+
+| Variabele | Waarde | Waarom |
+|---|---|---|
+| `OLLAMA_HOST` | `0.0.0.0` | Bereikbaar vanuit Docker (LiteLLM) en netwerk |
+| `OLLAMA_NUM_THREAD` | `20` | Alle vCPUs gebruiken (standaard: alleen fysieke cores = 50% CPU op HyperV) |
+| `OLLAMA_NUM_PARALLEL` | `2` | Twee gelijktijdige inference requests op hetzelfde geladen model |
+
+Na aanpassen: `systemctl daemon-reload && systemctl restart ollama`
+
 ## Ollama modellen
 
 Download de gewenste modellen na de installatie:
@@ -69,28 +85,35 @@ ollama pull qwen2.5:72b     # ~47 GB — primair conversiemodel, beste kwaliteit
 ollama pull qwen2.5:32b     # ~20 GB — goede balans kwaliteit/snelheid
 ollama pull qwen2.5:7b      # ~4.7 GB — snel, basisgebruik
 ollama pull llama3.3:70b    # ~43 GB — alternatief voor qwen2.5:72b
-ollama pull qwen2-vl:7b     # ~5.5 GB — vision model voor afbeeldingsbeschrijving
+ollama pull qwen2.5vl:7b    # ~5.5 GB — vision model voor afbeeldingsbeschrijving
 ```
 
-| Model | Grootte | Gebruik |
-|---|---|---|
-| `qwen2.5:72b` | ~47 GB | Beste kwaliteit Nederlandse tekst |
-| `qwen2.5:32b` | ~20 GB | Goede balans kwaliteit/snelheid |
-| `qwen2.5:7b` | ~4.7 GB | Snelste optie (~5 min/artikel) |
-| `llama3.3:70b` | ~43 GB | Meta model, vergelijkbaar met qwen2.5:72b |
-| `qwen2-vl:7b` | ~5.5 GB | Vision model — beschrijft afbeeldingen als gen-prompt |
+| Ollama model | LiteLLM naam | Grootte | Gebruik |
+|---|---|---|---|
+| `qwen2.5:72b` | `qwen2.5-72b` | ~47 GB | Beste kwaliteit Nederlandse tekst |
+| `qwen2.5:32b` | `qwen2.5-32b` | ~20 GB | Goede balans kwaliteit/snelheid |
+| `qwen2.5:7b` | `qwen2.5-7b` | ~4.7 GB | Snelste optie (~5 min/artikel) |
+| `llama3.3:70b` | `llama3.3-70b` | ~43 GB | Meta model, vergelijkbaar met qwen2.5:72b |
+| `qwen2.5vl:7b` | `qwen2.5vl-7b` | ~5.5 GB | **Vision model** — beschrijft afbeeldingen als gen-prompt |
+
+> **Let op naamgeving:** Ollama gebruikt `qwen2.5vl:7b` (met punt), LiteLLM exposeert dit als `qwen2.5vl-7b` (met koppelteken). De oude naam `qwen2-vl:7b` (zonder punt en versienummer) werkt niet meer.
 
 ## Afbeeldingen genereren
 
 De Image Gen Service ondersteunt twee backends:
 
-**Lokaal (SDXL via diffusers):**
-- Geen API-key nodig
-- SDXL-model wordt bij eerste aanvraag gedownload (~6 GB van HuggingFace)
-- Traag op CPU (geen GPU op deze VM)
+**Lokaal (diffusers, CPU):**
 
-**Replicate API:**
-- Sneller, kwaliteitsbeter
+| Model | `image_model` waarde | Stappen | Resolutie | Opmerking |
+|---|---|---|---|---|
+| Stable Diffusion XL 1.0 | `sdxl` | 20 | 1024×1024 | Model ~6 GB, eerste keer downloaden van HuggingFace |
+| SDXL Turbo | `sdxl-turbo` | 4 | 1024×1024 | Sneller, iets minder kwaliteit |
+| Stable Diffusion 1.5 | `sd15` | 20 | max 512×512 | Kleinste model, meest geheugenefficiënt |
+
+Geen API-key nodig. Traag op CPU (geen GPU op deze VM).
+
+**Replicate API (cloud):**
+- Sneller, betere kwaliteit
 - Vereist Replicate API-key (invoerbaar in Blog Convertor UI)
 - Beschikbare modellen: `sdxl`, `flux-schnell`, `flux-dev`
 
