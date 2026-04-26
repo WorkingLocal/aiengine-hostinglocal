@@ -2,7 +2,10 @@
 
 Centrale AI Engine voor Working Local toepassingen: LLM-inferentie, beeldgeneratie en gerelateerde AI-services.
 
-Draait als Ubuntu 24.04 VM op een Windows Server 2025 host (Hyper-V), bereikbaar via Tailscale op `100.80.180.55`.
+**3-node AI cluster (in opbouw):**
+- `ai-engine` — Hyper-V VM op Windows Server (live ✅)
+- `ai-node-i9` — Minisforum MS-01 i9 64GB bare metal (installatie in uitvoering)
+- `ai-node-i5` — Minisforum MS-01 i5 32GB bare metal (installatie in uitvoering)
 
 ## Huidige toepassingen
 
@@ -11,6 +14,8 @@ Draait als Ubuntu 24.04 VM op een Windows Server 2025 host (Hyper-V), bereikbaar
 | Blog Convertor | LiteLLM (tekstconversie), Stats Service (UI monitoring), Image Gen (afbeeldingen), Ollama Vision |
 
 ## Hardware
+
+### ai-engine (Hyper-V VM) — live ✅
 
 | Parameter | Waarde |
 |---|---|
@@ -22,6 +27,29 @@ Draait als Ubuntu 24.04 VM op een Windows Server 2025 host (Hyper-V), bereikbaar
 | RAM | 94 GB |
 | Gebruiker | `ailocal` |
 | Tailscale IP | `100.80.180.55` |
+
+### ai-node-i9 (bare metal) — installatie in uitvoering
+
+| Parameter | Waarde |
+|---|---|
+| Model | Minisforum MS-01 |
+| CPU | Intel Core Ultra 9 |
+| RAM | 64 GB |
+| Opslag | 4 TB + 2 TB + 1 TB NVMe |
+| iGPU | Intel Arc |
+| Netwerk IP | 192.168.111.31 |
+| Hostname | ai-node-i9 |
+
+### ai-node-i5 (bare metal) — installatie in uitvoering
+
+| Parameter | Waarde |
+|---|---|
+| Model | Minisforum MS-01 |
+| CPU | Intel Core Ultra 5 |
+| RAM | 32 GB |
+| iGPU | Intel Arc |
+| Netwerk IP | 192.168.111.32 |
+| Hostname | ai-node-i5 |
 
 ## Services
 
@@ -36,15 +64,21 @@ Draait als Ubuntu 24.04 VM op een Windows Server 2025 host (Hyper-V), bereikbaar
 
 ```
 aiengine-hostinglocal/
-└── ai-engine/
-    ├── setup.sh                # Volledig installatiescript
+├── ai-engine/
+│   ├── setup.sh                # Volledig installatiescript (ai-engine VM)
     ├── stats-server.py         # Stats Service (poort 11435)
     ├── stats-server.service    # systemd unit voor stats-server
     ├── litellm/
     │   └── config.yaml         # LiteLLM configuratie (modellen + timeout)
     └── image-gen/
-        ├── server.py           # Image Gen Service (poort 11436)
-        └── image-gen.service   # systemd unit voor image-gen
+│       ├── server.py           # Image Gen Service (poort 11436)
+│       └── image-gen.service   # systemd unit voor image-gen
+└── ai-nodes/
+    ├── setup.sh                # Gedeeld installatiescript voor beide nodes
+    ├── ai-node-i9/
+    │   └── node.md             # Hardware specs + installatiestatus i9
+    └── ai-node-i5/
+        └── node.md             # Hardware specs + installatiestatus i5
 ```
 
 ## Installatie
