@@ -1,39 +1,57 @@
 model_list:
+  # qwen2.5:72b — primair op ai-node-i9 (snelste), fallback op ai-engine VM
+  - model_name: qwen2.5-72b
+    litellm_params:
+      model: ollama/qwen2.5:72b
+      api_base: http://100.126.121.11:11434
   - model_name: qwen2.5-72b
     litellm_params:
       model: ollama/qwen2.5:72b
       api_base: http://host.docker.internal:11434
 
-  - model_name: qwen2.5-32b
+  # qwen2.5:7b — primair op ai-node-i5, fallback op ai-engine VM
+  - model_name: qwen2.5-7b
     litellm_params:
-      model: ollama/qwen2.5:32b
-      api_base: http://host.docker.internal:11434
-
+      model: ollama/qwen2.5:7b
+      api_base: http://100.78.175.49:11434
   - model_name: qwen2.5-7b
     litellm_params:
       model: ollama/qwen2.5:7b
       api_base: http://host.docker.internal:11434
 
+  # qwen2.5:32b — ai-engine VM (96GB RAM, past comfortabel)
+  - model_name: qwen2.5-32b
+    litellm_params:
+      model: ollama/qwen2.5:32b
+      api_base: http://host.docker.internal:11434
+
+  # llama3.3:70b — ai-engine VM
   - model_name: llama3.3-70b
     litellm_params:
       model: ollama/llama3.3:70b
       api_base: http://host.docker.internal:11434
 
-  # Vision model — niet beschikbaar als tekstmodel in Blog Convertor UI
+  # Vision model — ai-engine VM (niet beschikbaar als tekstmodel in Blog Convertor UI)
   - model_name: qwen2.5vl-7b
     litellm_params:
       model: ollama/qwen2.5vl:7b
       api_base: http://host.docker.internal:11434
 
-  # Alias: standaard → qwen2.5-72b (gebruikt door Blog Convertor als fallback)
+  # Alias standaard → qwen2.5-72b via ai-node-i9
   - model_name: standaard
     litellm_params:
       model: ollama/qwen2.5:72b
-      api_base: http://host.docker.internal:11434
+      api_base: http://100.126.121.11:11434
 
 general_settings:
   master_key: HostingLocal2024
+  database_url: "postgresql://litellm:LiteLLM2026Local@litellm-db:5432/litellm"
 
 litellm_settings:
-  request_timeout: 10800   # 3 uur per request (nodig voor grote modellen)
+  request_timeout: 10800
   drop_params: true
+  fallbacks:
+    - qwen2.5-72b:
+        - qwen2.5-72b
+    - qwen2.5-7b:
+        - qwen2.5-7b
