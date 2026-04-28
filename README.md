@@ -6,7 +6,7 @@ Centrale AI Engine voor Working Local toepassingen: LLM-inferentie, beeldgenerat
 
 | Node | Hardware | RAM | Tailscale IP | Rol |
 |---|---|---|---|---|
-| `ai-engine` | Hyper-V VM op Windows Server | 96 GB | 100.80.180.55 | LiteLLM proxy + fallback + vision |
+| `ai-engine` | Hyper-V VM op Windows Server | 12 GB | 100.80.180.55 | LiteLLM proxy + vision |
 | `ai-node-i9` | Minisforum MS-01 i9-13900H bare metal | 64 GB | 100.126.121.11 | Primaire inference (72B modellen) |
 | `ai-node-i5` | Minisforum MS-01 i5 bare metal | 32 GB | 100.78.175.49 | Lichte inference (7B modellen) |
 
@@ -106,10 +106,8 @@ curl -X POST https://ai.hostinglocal.be/key/generate \
 
 | Model | Primaire backend | Fallback | Grootte |
 |---|---|---|---|
-| `qwen2.5-72b` | ai-node-i9 (snelste CPU) | ai-engine VM | ~47 GB |
-| `qwen2.5-7b` | ai-node-i5 | ai-engine VM | ~4.7 GB |
-| `qwen2.5-32b` | ai-engine VM (96 GB RAM) | — | ~20 GB |
-| `llama3.3-70b` | ai-engine VM | — | ~43 GB |
+| `qwen2.5-72b` | ai-node-i9 (snelste CPU) | — | ~47 GB |
+| `qwen2.5-7b` | ai-node-i5 | — | ~4.7 GB |
 | `qwen2.5vl-7b` | ai-engine VM | — | ~5.5 GB (vision) |
 | `standaard` | ai-node-i9 | — | alias → 72b |
 
