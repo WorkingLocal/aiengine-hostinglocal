@@ -17,6 +17,24 @@ model_list:
       model: ollama/qwen2.5vl:7b
       api_base: http://host.docker.internal:11434
 
+  # qwen2.5-coder:32b — ai-node-i9 (coding, schakelbaar met 72b)
+  - model_name: qwen2.5-coder-32b
+    litellm_params:
+      model: ollama/qwen2.5-coder:32b
+      api_base: http://100.126.121.11:11434
+
+  # qwen2.5-coder:7b — ai-node-i5 (snelle coding chat)
+  - model_name: qwen2.5-coder-7b
+    litellm_params:
+      model: ollama/qwen2.5-coder:7b
+      api_base: http://100.78.175.49:11434
+
+  # qwen2.5-coder:1.5b — ai-node-i5 (realtime autocomplete)
+  - model_name: qwen2.5-coder-1.5b
+    litellm_params:
+      model: ollama/qwen2.5-coder:1.5b
+      api_base: http://100.78.175.49:11434
+
   # Alias standaard → qwen2.5-72b via ai-node-i9
   - model_name: standaard
     litellm_params:
