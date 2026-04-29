@@ -95,12 +95,15 @@ curl -X POST https://ai.hostinglocal.be/key/generate \
 | Ollama | 11434 | systemd | ✅ actief |
 | node_exporter | 9100 | systemd | ✅ actief |
 
+> **ZFS ARC limiet:** ai-node-i9 exporteert NVMe via ZFS/NFS (muziek + fotos). ZFS ARC beperkt tot 10GB zodat qwen2.5:72b (48.5GB) kan laden. Persistent via `/etc/modprobe.d/zfs.conf`.
+
 ### ai-node-i5
 
 | Service | Poort | Type | Status |
 |---|---|---|---|
 | Ollama | 11434 | systemd | ✅ actief |
 | node_exporter | 9100 | systemd | ✅ actief |
+| immich-machine-learning | 3003 | Docker | ✅ actief (OpenVINO) |
 
 ## LiteLLM model routing
 
