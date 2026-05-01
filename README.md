@@ -32,6 +32,7 @@ curl -X POST https://ai.hostinglocal.be/key/generate \
 |---|---|
 | Blog Convertor | LiteLLM (tekstconversie), Stats Service (UI monitoring), Image Gen (afbeeldingen), Ollama Vision |
 | Vrienden | LiteLLM API via https://ai.hostinglocal.be |
+| Continue (VSCode) | LiteLLM via https://ai.hostinglocal.be/v1 — lokale AI code-assistent (Qwen2.5-Coder) |
 
 ## Hardware
 
@@ -113,6 +114,9 @@ curl -X POST https://ai.hostinglocal.be/key/generate \
 | `qwen2.5-7b` | ai-node-i5 | — | ~4.7 GB |
 | `qwen2.5vl-7b` | ai-engine VM | — | ~5.5 GB (vision) |
 | `standaard` | ai-node-i9 | — | alias → 72b |
+| `qwen2.5-coder-32b` | ai-node-i9 | — | ~20 GB |
+| `qwen2.5-coder-7b` | ai-node-i5 | — | ~4.7 GB |
+| `qwen2.5-coder-1.5b` | ai-node-i5 | — | ~1 GB |
 
 ## Repository structuur
 
@@ -183,10 +187,13 @@ Na aanpassen: `systemctl daemon-reload && systemctl restart ollama`
 
 ```bash
 # ai-node-i9 (64 GB RAM) — primaire node
-ollama pull qwen2.5:72b     # ~47 GB — primair conversiemodel
+ollama pull qwen2.5:72b           # ~47 GB — primair conversiemodel
+ollama pull qwen2.5-coder:32b     # ~20 GB — code-assistent (Continue/VSCode)
 
 # ai-node-i5 (32 GB RAM) — lichte inference
-ollama pull qwen2.5:7b      # ~4.7 GB
+ollama pull qwen2.5:7b            # ~4.7 GB
+ollama pull qwen2.5-coder:7b      # ~4.7 GB — code-assistent
+ollama pull qwen2.5-coder:1.5b    # ~1 GB — autocomplete (Continue/VSCode)
 
 # ai-engine VM (96 GB RAM) — fallback + extra modellen
 ollama pull qwen2.5:72b     # fallback voor i9
@@ -203,6 +210,9 @@ ollama pull qwen2.5vl:7b    # ~5.5 GB — vision model
 | `qwen2.5:7b` | `qwen2.5-7b` | ~4.7 GB | ai-node-i5 |
 | `llama3.3:70b` | `llama3.3-70b` | ~43 GB | ai-engine VM |
 | `qwen2.5vl:7b` | `qwen2.5vl-7b` | ~5.5 GB | ai-engine VM (vision) |
+| `qwen2.5-coder:32b` | `qwen2.5-coder-32b` | ~20 GB | ai-node-i9 |
+| `qwen2.5-coder:7b` | `qwen2.5-coder-7b` | ~4.7 GB | ai-node-i5 |
+| `qwen2.5-coder:1.5b` | `qwen2.5-coder-1.5b` | ~1 GB | ai-node-i5 |
 
 > **Let op naamgeving:** Ollama gebruikt `qwen2.5vl:7b` (met punt), LiteLLM exposeert dit als `qwen2.5vl-7b` (met koppelteken).
 
@@ -258,6 +268,22 @@ ollama ps            # actief geladen modellen
 nano /home/ailocal/litellm/config.yaml
 docker compose restart litellm
 ```
+
+## Continue — VSCode AI code-assistent
+
+Continue (v1.2.22) is geconfigureerd in VSCode op de developer laptop en verbindt via LiteLLM met de Qwen2.5-Coder modellen.
+
+**Config:** `C:\Users\Lenovo\.continue\config.yaml`
+
+| Model | Rol | LiteLLM naam |
+|---|---|---|
+| Qwen2.5-Coder 32B | chat + edit | `qwen2.5-coder-32b` |
+| Qwen2.5-Coder 7B | chat (snel) | `qwen2.5-coder-7b` |
+| Qwen2.5-Coder 1.5B | autocomplete | `qwen2.5-coder-1.5b` |
+
+**Credentials:** LiteLLM Master Key (`HostingLocal2024`) → opgeslagen in Vaultwarden als "LiteLLM Master Key"
+
+**API endpoint:** `https://ai.hostinglocal.be/v1` (Cloudflare tunnel) of intern `http://100.80.180.55:4000`
 
 ## Gerelateerde repositories
 
