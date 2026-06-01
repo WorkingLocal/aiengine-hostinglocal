@@ -42,8 +42,8 @@ model_list:
       api_base: http://100.126.121.11:11434
 
 general_settings:
-  master_key: HostingLocal2024
-  database_url: "postgresql://litellm:LiteLLM2026Local@litellm-db:5432/litellm"
+  master_key: "${LITELLM_MASTER_KEY}"
+  database_url: "${LITELLM_DATABASE_URL}"
 
 litellm_settings:
   request_timeout: 10800
