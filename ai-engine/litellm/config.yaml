@@ -1,5 +1,11 @@
 model_list:
-  # qwen2.5:72b — primair op ai-node-i9
+  # qwen2.5:32b — primair op ai-node-i9 (standaard voor AutoBA)
+  - model_name: qwen2.5-32b
+    litellm_params:
+      model: ollama/qwen2.5:32b
+      api_base: http://100.126.121.11:11434
+
+  # qwen2.5:72b — ai-node-i9, voor zware analyse
   - model_name: qwen2.5-72b
     litellm_params:
       model: ollama/qwen2.5:72b
@@ -35,11 +41,32 @@ model_list:
       model: ollama/qwen2.5-coder:1.5b
       api_base: http://100.78.175.49:11434
 
-  # Alias standaard → qwen2.5-72b via ai-node-i9
+  # Alias standaard → qwen2.5-32b via ai-node-i9
   - model_name: standaard
     litellm_params:
-      model: ollama/qwen2.5:72b
+      model: ollama/qwen2.5:32b
       api_base: http://100.126.121.11:11434
+
+  # ── Anthropic Claude (cloud) ──────────────────────────────────────────────
+  # Vereist: ANTHROPIC_API_KEY in omgeving van de litellm container
+
+  # Claude Sonnet 4.6 — gebalanceerd, aanbevolen voor AutoBA
+  - model_name: claude-sonnet-4-6
+    litellm_params:
+      model: anthropic/claude-sonnet-4-6
+      api_key: "${ANTHROPIC_API_KEY}"
+
+  # Claude Haiku 4.5 — snel en goedkoop, geschikt voor korte taken
+  - model_name: claude-haiku-4-5
+    litellm_params:
+      model: anthropic/claude-haiku-4-5-20251001
+      api_key: "${ANTHROPIC_API_KEY}"
+
+  # Claude Opus 4.8 — meest capabel, voor complexe BA-analyse
+  - model_name: claude-opus-4-8
+    litellm_params:
+      model: anthropic/claude-opus-4-8
+      api_key: "${ANTHROPIC_API_KEY}"
 
 general_settings:
   master_key: "${LITELLM_MASTER_KEY}"
