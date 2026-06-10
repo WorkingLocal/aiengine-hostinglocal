@@ -48,7 +48,7 @@ model_list:
       api_base: http://100.126.121.11:11434
 
   # ── Anthropic Claude (cloud) ──────────────────────────────────────────────
-  # Vereist: ANTHROPIC_API_KEY in omgeving van de litellm container
+  # Vereist: ANTHROPIC_API_KEY in .env naast docker-compose.yml
 
   # Claude Sonnet 4.6 — gebalanceerd, aanbevolen voor AutoBA
   - model_name: claude-sonnet-4-6
@@ -69,8 +69,8 @@ model_list:
       api_key: "${ANTHROPIC_API_KEY}"
 
 general_settings:
-  master_key: "${LITELLM_MASTER_KEY}"
-  database_url: "${LITELLM_DATABASE_URL}"
+  master_key: HostingLocal2024
+  database_url: "postgresql://litellm:LiteLLM2026Local@litellm-db:5432/litellm"
 
 litellm_settings:
   request_timeout: 10800
