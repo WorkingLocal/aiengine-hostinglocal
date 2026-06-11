@@ -71,6 +71,8 @@ model_list:
 general_settings:
   master_key: HostingLocal2024
   database_url: "postgresql://litellm:LiteLLM2026Local@litellm-db:5432/litellm"
+  max_budget: 10.0
+  budget_duration: "1mo"
 
 litellm_settings:
   request_timeout: 10800
