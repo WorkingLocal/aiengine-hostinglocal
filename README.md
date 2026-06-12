@@ -33,6 +33,24 @@ curl -X POST https://ai.hostinglocal.be/key/generate \
 | Blog Convertor | LiteLLM (tekstconversie), Stats Service (UI monitoring), Image Gen (afbeeldingen), Ollama Vision |
 | Vrienden | LiteLLM API via https://ai.hostinglocal.be |
 | Continue (VSCode) | LiteLLM via https://ai.hostinglocal.be/v1 — lokale AI code-assistent (Qwen2.5-Coder) |
+| AutoBA Agent | LiteLLM + Ollama embeddings (nomic-embed-text). Claude-modellen beschikbaar via cloud_models. |
+
+## Anthropic Claude API (toegevoegd 2026-06-12)
+
+Claude-modellen beschikbaar via LiteLLM als cloud-aanvulling op lokale Ollama-modellen.
+
+| LiteLLM naam | Anthropic model | Gebruik |
+|---|---|---|
+| `claude-sonnet-4-6` | anthropic/claude-sonnet-4-6 | Gebalanceerd, aanbevolen |
+| `claude-haiku-4-5` | anthropic/claude-haiku-4-5-20251001 | Snel en goedkoop |
+| `claude-opus-4-8` | anthropic/claude-opus-4-8 | Meest capabel, zware analyse |
+
+**Budget:** $10/maand globaal (`max_budget: 10.0`, `budget_duration: 1mo` in `config.yaml`)  
+**API-sleutel:** Vaultwarden → "Claude API - Kubik Consulting" (veld: authenticatiesleutel)  
+**Configuratie:** `/home/ailocal/litellm/.env` → `ANTHROPIC_API_KEY=...`  
+**config.yaml syntax:** `api_key: os.environ/ANTHROPIC_API_KEY` (LiteLLM-notatie, geen `${}`)
+
+**Credits monitoring:** https://metrics.hostinglocal.be → dashboard "AI Engine — Claude Credits" (UID: `litellm-credits`)
 
 ## Hardware
 
