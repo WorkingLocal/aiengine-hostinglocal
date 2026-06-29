@@ -47,6 +47,13 @@ model_list:
       model: ollama/qwen2.5:32b
       api_base: http://100.126.121.11:11434
 
+  # ── Embeddings — nomic-embed-text op ai-engine host ─────────────────────
+  # Ollama draait lokaal op ai-engine (host.docker.internal = host-gateway)
+  - model_name: nomic-embed-text
+    litellm_params:
+      model: ollama/nomic-embed-text
+      api_base: http://host.docker.internal:11434
+
   # ── Anthropic Claude (cloud) ──────────────────────────────────────────────
   # Vereist: ANTHROPIC_API_KEY in .env naast docker-compose.yml
 
